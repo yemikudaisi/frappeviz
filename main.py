@@ -5,6 +5,7 @@ import sys
 from sys import modules
 from relationships import Composition
 from umlbuilder import ClassGenerator
+import json
 
 # Create the parser
 arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
@@ -55,7 +56,7 @@ def generate_doctype_uml(doctype_name, fields):
     gen = ClassGenerator(doctype_name)
     for f in fields:
         gen.addField(f)
-    return
+    return gen.to_plantuml()
 
 if is_frappe_app_folder(input_path):
     print('Frappe App name: ' + frappe_app_name)
@@ -74,15 +75,19 @@ for m in app_modules:
     if os.path.isdir(module_path):
         module_doctype_dir = os.path.join(module_path, 'doctype')
         if os.path.isdir(module_doctype_dir):
-            print(m + " doctype folder exists")
+            #print(m + " doctype folder exists")
+            module_uml = 'package foo3 <<Folder>> {'
             for filename in os.listdir(module_doctype_dir):
                 doctype_file = os.path.join(module_doctype_dir,filename, filename+'.json')
                 if os.path.isfile(doctype_file):
                     print(doctype_file)
-                    module_uml = 'package foo3 <<Folder>> {'
-                    module_uml += '}'
-                #if filename.endswith(".json"):
-                    #print(filename)
-                #else:
-                    #continue
+                    with open(doctype_file) as f:
+                        data = json.load(f)
+                    module_uml += generate_doctype_uml(data['name'], data['fields'])
+                    
+            module_uml += '}'
+            file = open(get_folder_name(m),"w")
+            file.write(module_uml)
+            file.close()
+            print(module_uml)
 
