@@ -2,6 +2,8 @@
 import argparse
 import os
 import sys
+from relationships import Composition
+from umlbuilder import ClassGenerator
 
 # Create the parser
 arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
@@ -38,8 +40,26 @@ def is_frappe_app_folder(path_to_app):
     
     return False
 
+def get_app_modules():
+    pass
+
+def generate_doctype_uml(doctype_name, fields):
+    """Generates class diagram for doctype given a list of fields
+    """
+    gen = ClassGenerator(doctype_name)
+    for f in fields:
+        gen.addField(f)
+    
+    print(gen.to_plantuml())
+
 if is_frappe_app_folder(input_path):
     print('Frappe App name: ' + frappe_app_name)
+    generate_doctype_uml('TestDoctype', [
+        {"fieldname": "name","fieldtype": "Data"},
+        {"fieldname": "rank","fieldtype": "Data"},
+        {"fieldname": "height","fieldtype": "Link","options":"OtherDoctype"}])
 else:
     print('Path to directory supplied is not a frappe app folder')
     sys.exit()
+
+
