@@ -1,0 +1,77 @@
+{
+    "autoname": "LTRN.#######", 
+    "creation": "2014-05-06 14:34:41.241500", 
+    "docstatus": 0, 
+    "doctype": "DocType", 
+    "document_type": "Transaction", 
+    "fields": [
+     {
+      "fieldname": "transaction_type", 
+      "fieldtype": "Select", 
+      "in_list_view": 1, 
+      "label": "Transaction Type", 
+      "options": "Issue\nReturn", 
+      "permlevel": 0, 
+      "reqd": 1
+     }, 
+     {
+      "default": "Today", 
+      "fieldname": "transaction_date", 
+      "fieldtype": "Datetime", 
+      "label": "Transaction Date", 
+      "permlevel": 0, 
+      "reqd": 1
+     }, 
+     {
+      "fieldname": "article", 
+      "fieldtype": "Link", 
+      "in_list_view": 1, 
+      "label": "Article", 
+      "options": "Article", 
+      "permlevel": 0, 
+      "reqd": 1
+     }, 
+     {
+      "fieldname": "article_name", 
+      "fieldtype": "Read Only", 
+      "in_list_view": 1, 
+      "label": "Article Name", 
+      "options": "article.article_name", 
+      "permlevel": 0
+     }, 
+     {
+      "fieldname": "library_member", 
+      "fieldtype": "Link", 
+      "in_list_view": 1, 
+      "label": "Library Member", 
+      "options": "Library Member", 
+      "permlevel": 0, 
+      "reqd": 1
+     }, 
+     {
+      "fieldname": "member_name", 
+      "fieldtype": "Data", 
+      "in_list_view": 1, 
+      "label": "Member Name", 
+      "permlevel": 0, 
+      "read_only": 1
+     }
+    ], 
+    "modified": "2014-05-10 15:07:12.563492", 
+    "modified_by": "Administrator", 
+    "module": "Library Management", 
+    "name": "Library Transaction", 
+    "name_case": "", 
+    "owner": "Administrator", 
+    "permissions": [
+     {
+      "create": 1, 
+      "delete": 1, 
+      "permlevel": 0, 
+      "read": 1, 
+      "report": 1, 
+      "role": "Librarian", 
+      "write": 1
+     }
+    ]
+   }

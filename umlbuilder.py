@@ -25,9 +25,9 @@ class ClassGenerator:
         output = ''
 
         for r in self.relationships:
-            output += str(r)
+            output += str(r)+'\n'
 
-        output += '\nclass %s {' % (self.class_name)
+        output += 'class "%s" {' % (self.class_name)
         for f in self.fields:
             output += '\n  '+str(f)
         output += '\n}'
