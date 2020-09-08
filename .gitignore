@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# PlantUml Jar file
+*.jar
+
 # Distribution / packaging
 .Python
 build/
