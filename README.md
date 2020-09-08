@@ -1,8 +1,8 @@
-# frappe-app-viz
+# Frappe App Visualizer
 
-A python app for visualizing class diagram of a [Frappe App's](https://frappeframework.com/) doctypes using [PlantUml](https://plantuml.com/)
+A python app for visualizing class diagrams of a [Frappe App's](https://frappeframework.com/) doctypes using [PlantUML](https://plantuml.com/)
 
-## Requirements
+## Dependencies
 
 - [Python 3](https://www.python.org/download/releases/3.0/)
 - [PlantUML](https://pypi.org/project/plantuml/)
@@ -10,6 +10,8 @@ A python app for visualizing class diagram of a [Frappe App's](https://frappefra
 ## Usage
 
 ```
+$ git clone https://github.com/yemikudaisi/frappe-app-viz.git
+$ cd frappe-app-viz
 $ pip install -r requirements.txt
 $ python main.py path/to/frappe/app/dir -o /path/to/output/dir
 ```
