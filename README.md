@@ -2,6 +2,8 @@
 
 A python app for visualizing class diagrams of a [Frappe App's](https://frappeframework.com/) doctypes using [PlantUML](https://plantuml.com/)
 
+![Screenshot](docs/library_management.png)
+
 ## Dependencies
 
 - [Python 3](https://www.python.org/download/releases/3.0/)
