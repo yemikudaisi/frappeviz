@@ -6,9 +6,6 @@ from sys import modules
 from umlbuilder import ClassGenerator
 import json
 
-#plantuml download link
-plantuml_jar_link = r"""https://downloads.sourceforge.net/project/plantuml/plantuml.jar?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fplantuml%2Ffiles%2Fplantuml.jar%2Fdownload&ts=1599539005"""
-
 # Create the parser
 arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
 
@@ -75,15 +72,11 @@ def get_folder_name(module_name):
 
 def generate_plantuml_graphics():
     """Generate plantuml image for corresponding plantuml files in output folder.
-    Usage:
-        %java -jar plantuml.jar -tsvg filname
     """
     for filename in os.listdir(output_dir):
         if filename.endswith(".plantuml"):
-            command = "java -jar plantuml.jar %s" % os.path.join(output_dir,filename)
-            print(command)
-            os.system("java -jar plantuml.jar %s" % filename)
-        else:
+            command = "python3 -m plantuml %s" % os.path.join(output_dir,filename)
+            os.system(command)
             continue
 
 
@@ -97,7 +90,8 @@ def write_app_module_output(module_file_name, module_uml):
             file = open(os.path.join(output_dir,module_file_name+'.plantuml'),"w")
             file.write(module_uml)
             file.close()
-        
+
+# Loop through app modules and generate UML package and class for each     
 for m in app_modules:
     module_doctype_files = []
     module_path = os.path.join(input_path,frappe_app_name,get_folder_name(m))
