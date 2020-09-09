@@ -18,53 +18,56 @@ arg_parser.add_argument('--output', '-o',
     help="Output directory",
     required=True)
 
-# Execute the parse_args() method
+# Parsr arguments
 args = arg_parser.parse_args()
-
-input_path = args.app_dir
+frappe_app_dir = args.app_dir
 output_dir = args.output
 
 frappe_app_name = ''
-app_modules = []
+frappe_app_modules = []
 
-if not os.path.isdir(input_path):
+if not os.path.isdir(frappe_app_dir):
     print('The path specified does not exist')
     sys.exit()
 
 def is_frappe_app_folder(path_to_app):
     """Check if a modules.txt file exists within a python module (folder) that shares exactly
-    the same name as the frappe app supplied
+    the same name as the frappe app dir supplied
     """
 
     global frappe_app_name
     frappe_app_name  = os.path.basename(os.path.normpath(path_to_app))
     module_file_path = os.path.join(path_to_app, frappe_app_name, 'modules.txt') 
 
+    # If a 'modules.txt' file exists
     if os.path.isfile(module_file_path):
-        # read modules
-        global app_modules
+        # fetch app modules from file content in to a global variable
+        global frappe_app_modules
         with open(module_file_path, "r") as modules:
             for l in modules.readlines():
-                app_modules.append(l.replace('\n',''))
+                frappe_app_modules.append(l.replace('\n',''))
         return True
     
     return False
 
 class Composition:
-    """ Python class for composition class relartionship
+    """ Python class that represents a class composition relationship
     """
     def __init__(self, class_name):
         self.owner_class_name = class_name
 
     def has(self, other_class_name, comment = ''):
-        """Assign composition relationship between one class to another
+        """Add a composition relationship between owner class to another class
         """
         self.child_class_name = other_class_name
         self.comment = comment
         return self
     
     def __str__(self):
+        """PlantUML string representation of class diagram"""
         output = '"%s" *-- "%s"' % (self.child_class_name,self.owner_class_name)
+        
+        #check if a comment was supplied
         if not self.comment == '':
             output += ': %s' % (self.comment)
 
@@ -82,7 +85,12 @@ class Extension:
         return self
     
     def __str__(self):
-        return '"%s" <|- "%s" : %s' % (self.parent_class_name,self.child_class_name, self.comment)
+        """PlantUML string representation of class diagram"""
+        return '"%s" <|- "%s" : %s' % (self.parent_class_name,self.child_class_name)
+        
+         #check if a comment was supplied
+        if not self.comment == '':
+            output += ': %s' % (self.comment)
 
 class Docfield:
     """ Python representing docfield in a frappe doctype
@@ -130,55 +138,58 @@ def generate_doctype_uml(doctype_name, fields):
         gen.addField(f)
     return gen.to_plantuml()
 
-if is_frappe_app_folder(input_path):
+# Validate frappe app directory passed as argument
+if is_frappe_app_folder(frappe_app_dir):
     print('Generating UML for ' + frappe_app_name)
 else:
-    print('Path to directory supplied is not a frappe app folder')
+    print('Directory is not a frappe app.')
     sys.exit()
 
 def get_folder_name(module_name):
-    module_name = module_name.lower()
-    module_name = module_name.replace(' ','_')
-    return module_name
+    """ Basically converts
+    'Hello World' to 'hello_word'
+    """
+    return module_name.lower().replace(' ','_')
 
 def generate_plantuml_graphics():
     """Generate plantuml image for corresponding plantuml files in output folder.
     """
     for filename in os.listdir(output_dir):
-        if filename.endswith(".plantuml"):
-            command = "python3 -m plantuml %s" % os.path.join(output_dir,filename)
+        if filename.endswith('.plantuml'):
+            command = 'python3 -m plantuml %s' % os.path.join(output_dir,filename)
             os.system(command)
             continue
-
 
 def write_app_module_output(module_file_name, module_uml):
     """Writes the plantuml uml text for a module to file given a module file name
     """
     if output_dir:
         if not os.path.isdir(output_dir):
-            print("output directory does not exist")
+            print('output directory does not exist')
         else:
             file = open(os.path.join(output_dir,module_file_name+'.plantuml'),"w")
             file.write(module_uml)
             file.close()
 
-# Loop through app modules and generate UML package and class for each     
-for m in app_modules:
-    module_doctype_files = []
-    module_path = os.path.join(input_path,frappe_app_name,get_folder_name(m))
-    if os.path.isdir(module_path):
-        module_doctype_dir = os.path.join(module_path, 'doctype')
-        if os.path.isdir(module_doctype_dir):
-            module_uml = '@startuml\npackage %s.%s <<Folder>> {' % (frappe_app_name,get_folder_name(m))
-            for filename in os.listdir(module_doctype_dir):
-                doctype_file = os.path.join(module_doctype_dir,filename, filename+'.json')
-                if os.path.isfile(doctype_file):
-                    with open(doctype_file) as f:
-                        data = json.load(f)
-                    module_uml += generate_doctype_uml(data['name'], data['fields'])
-                    
-            module_uml += '}\n@enduml'
-            write_app_module_output(get_folder_name(m),module_uml)
-
+def generate_plantuml_text():
+    # Loop through app modules and generate UML packages and classes for respective modules and doctypes    
+    for m in frappe_app_modules:
+        module_doctype_files = []
+        module_path = os.path.join(frappe_app_dir,frappe_app_name,get_folder_name(m))
+        if os.path.isdir(module_path):
+            module_doctype_dir = os.path.join(module_path, 'doctype')
+            if os.path.isdir(module_doctype_dir):
+                module_uml = '@startuml\npackage %s.%s <<Folder>> {' % (frappe_app_name,get_folder_name(m))
+                for filename in os.listdir(module_doctype_dir):
+                    doctype_file = os.path.join(module_doctype_dir,filename, filename+'.json')
+                    if os.path.isfile(doctype_file):
+                        with open(doctype_file) as f:
+                            data = json.load(f)
+                        module_uml += generate_doctype_uml(data['name'], data['fields'])
+                        
+                module_uml += '}\n@enduml'
+                write_app_module_output(get_folder_name(m),module_uml)
+                
+generate_plantuml_text()
 generate_plantuml_graphics()
 
