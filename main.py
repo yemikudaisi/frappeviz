@@ -5,44 +5,21 @@ import sys
 from sys import modules
 import json
 
-# Create the parser
-arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
-
-# Add the arguments
-arg_parser.add_argument('app_dir',
-                       metavar='dir',
-                       type=str,
-                       help='the path to frappe app')
-
-arg_parser.add_argument('--output', '-o',
-    help="Output directory",
-    required=True)
-
-# Parsr arguments
-args = arg_parser.parse_args()
-frappe_app_dir = args.app_dir
-output_dir = args.output
-
-frappe_app_name = ''
 frappe_app_modules = []
-
-if not os.path.isdir(frappe_app_dir):
-    print('The path specified does not exist')
-    sys.exit()
 
 def is_frappe_app_folder(path_to_app):
     """Check if a modules.txt file exists within a python module (folder) that shares exactly
     the same name as the frappe app dir supplied
     """
 
-    global frappe_app_name
+    global frappe_app_name,frappe_app_modules
     frappe_app_name  = os.path.basename(os.path.normpath(path_to_app))
     module_file_path = os.path.join(path_to_app, frappe_app_name, 'modules.txt') 
 
     # If a 'modules.txt' file exists
     if os.path.isfile(module_file_path):
+       
         # fetch app modules from file content in to a global variable
-        global frappe_app_modules
         with open(module_file_path, "r") as modules:
             for l in modules.readlines():
                 frappe_app_modules.append(l.replace('\n',''))
@@ -86,7 +63,7 @@ class Extension:
     
     def __str__(self):
         """PlantUML string representation of class diagram"""
-        return '"%s" <|- "%s" : %s' % (self.parent_class_name,self.child_class_name)
+        output = '"%s" <|- "%s" : %s' % (self.parent_class_name,self.child_class_name)
         
          #check if a comment was supplied
         if not self.comment == '':
@@ -138,13 +115,6 @@ def generate_doctype_uml(doctype_name, fields):
         gen.addField(f)
     return gen.to_plantuml()
 
-# Validate frappe app directory passed as argument
-if is_frappe_app_folder(frappe_app_dir):
-    print('Generating UML for ' + frappe_app_name)
-else:
-    print('Directory is not a frappe app.')
-    sys.exit()
-
 def get_folder_name(module_name):
     """ Basically converts
     'Hello World' to 'hello_word'
@@ -174,7 +144,6 @@ def write_app_module_output(module_file_name, module_uml):
 def generate_plantuml_text():
     # Loop through app modules and generate UML packages and classes for respective modules and doctypes    
     for m in frappe_app_modules:
-        module_doctype_files = []
         module_path = os.path.join(frappe_app_dir,frappe_app_name,get_folder_name(m))
         if os.path.isdir(module_path):
             module_doctype_dir = os.path.join(module_path, 'doctype')
@@ -189,7 +158,38 @@ def generate_plantuml_text():
                         
                 module_uml += '}\n@enduml'
                 write_app_module_output(get_folder_name(m),module_uml)
-                
-generate_plantuml_text()
-generate_plantuml_graphics()
 
+if __name__ == '__main__':
+    # Create the parser
+    arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
+
+    # Add the arguments
+    arg_parser.add_argument('app_dir',
+                        metavar='dir',
+                        type=str,
+                        help='the path to frappe app')
+
+    arg_parser.add_argument('--output', '-o',
+        help="Output directory",
+        required=True)
+
+    # Parse arguments
+    args = arg_parser.parse_args()
+
+    global frappe_app_dir, output_dir
+    frappe_app_dir = args.app_dir
+    output_dir = args.output
+
+    if not os.path.isdir(frappe_app_dir):
+        print('Frappe app directory does not exist')
+        sys.exit()
+
+    # Validate frappe app directory passed as argument
+    if is_frappe_app_folder(frappe_app_dir):
+        print('Generating UML for ' + frappe_app_name)
+    else:
+        print('Directory is not a frappe app.')
+        sys.exit()
+
+    generate_plantuml_text()
+    generate_plantuml_graphics()
