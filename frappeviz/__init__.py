@@ -1,0 +1,1 @@
+from frappeviz.frappeviz import cmdline

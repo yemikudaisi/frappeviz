@@ -2,7 +2,7 @@
 
 A python app for visualizing class diagrams of a [Frappe App's](https://frappeframework.com/) doctypes using [PlantUML](https://plantuml.com/)
 
-![Screenshot](docs/library_management.png)
+![Screenshot](https://github.com/yemikudaisi/frappe_viz/raw/master/docs/library_management.png)
 
 ## Dependencies
 
@@ -20,9 +20,9 @@ $ python main.py path/to/frappe/app/dir -o /path/to/output/dir
 
 ### Arguments
 - frappe folder path
-- --output - output folder
+- --output : output folder
 
-The output files will be equivalent to the total amount of modules that contains doctype (i.e the UML for each module in the app is generated in a separate file that shares the same name as the module name)
+The UML for each module in the app is generated in separate files (PlantUML text and .png images) that shares the same name as the app's respective modules.
 
 ## TODO
 - [x] Add support for output folder argument

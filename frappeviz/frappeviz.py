@@ -1,4 +1,4 @@
-# main.py
+# frappeviz.py
 import argparse
 import os
 import sys
@@ -159,7 +159,7 @@ def generate_plantuml_text():
                 module_uml += '}\n@enduml'
                 write_app_module_output(get_folder_name(m),module_uml)
 
-if __name__ == '__main__':
+def cmdline():
     # Create the parser
     arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
 
