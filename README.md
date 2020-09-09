@@ -26,5 +26,4 @@ The UML for each module in the app is generated in separate files (PlantUML text
 
 ## TODO
 - [x] Add support for output folder argument
-- [ ] Generate UML in current working directory if output folder argument is not passed
 - [ ] Add support for selecting specific modules within an app

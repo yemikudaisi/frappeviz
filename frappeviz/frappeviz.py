@@ -141,8 +141,9 @@ def write_app_module_output(module_file_name, module_uml):
             file.write(module_uml)
             file.close()
 
-def generate_plantuml_text():
-    # Loop through app modules and generate UML packages and classes for respective modules and doctypes    
+def build_plantuml_text():
+    # Build UML packages and classes for respective modules and doctypes
+    module_uml_list = []    
     for m in frappe_app_modules:
         module_path = os.path.join(frappe_app_dir,frappe_app_name,get_folder_name(m))
         if os.path.isdir(module_path):
@@ -157,7 +158,21 @@ def generate_plantuml_text():
                         module_uml += generate_doctype_uml(data['name'], data['fields'])
                         
                 module_uml += '}\n@enduml'
-                write_app_module_output(get_folder_name(m),module_uml)
+                module_uml_list.append({ "name": m, "uml": module_uml})
+    return module_uml_list
+
+def print_plantuml_text():
+    # Generates UML text and writes to file 
+    umls = build_plantuml_text()
+    for u in umls:
+        print(u['uml'])
+        print('='*20)
+
+def generate_plantuml_text():
+    # Generates UML text and writes to file 
+    umls = build_plantuml_text()
+    for u in umls:
+        write_app_module_output(get_folder_name(u['name']), u['uml'])
 
 def cmdline():
     # Create the parser
@@ -169,9 +184,14 @@ def cmdline():
                         type=str,
                         help='the path to frappe app')
 
-    arg_parser.add_argument('--output', '-o',
-        help="Output directory",
-        required=True)
+    arg_parser.add_argument(
+        '--output', '-o',
+        metavar='output-dir',
+        help="Output directory")
+
+    arg_parser.add_argument('--format', '-f',
+        choices=['txt', 'img', 'all'],
+        help="Specifies output format")
 
     # Parse arguments
     args = arg_parser.parse_args()
@@ -179,6 +199,7 @@ def cmdline():
     global frappe_app_dir, output_dir
     frappe_app_dir = args.app_dir
     output_dir = args.output
+    output_format = args.format
 
     if not os.path.isdir(frappe_app_dir):
         print('Frappe app directory does not exist')
@@ -191,5 +212,28 @@ def cmdline():
         print('Directory is not a frappe app.')
         sys.exit()
 
-    generate_plantuml_text()
-    generate_plantuml_graphics()
+    if output_dir:
+        if not output_format:
+            print('Output format not specified')
+            sys.exit()
+            
+        if output_format == 'txt' or output_format == 'all':
+            generate_plantuml_text()
+            print('PlatUML text files generated')
+
+        if output_format == 'img' or output_format == 'all':
+            # if only images are required, generate the text and delete after images have been created
+            
+            if output_format == 'img':
+                generate_plantuml_text()
+                generate_plantuml_graphics()
+                filelist = [ f for f in os.listdir(output_dir) if f.endswith(".plantuml") ]
+                for f in filelist:
+                    os.remove(os.path.join(output_dir, f))
+            else:
+                generate_plantuml_graphics()
+            
+            print('UML image files generated')
+    else:
+        print_plantuml_text()
+
