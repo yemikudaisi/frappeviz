@@ -174,32 +174,7 @@ def generate_plantuml_text():
     for u in umls:
         write_app_module_output(get_folder_name(u['name']), u['uml'])
 
-def cmdline():
-    # Create the parser
-    arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
-
-    # Add the arguments
-    arg_parser.add_argument('app_dir',
-                        metavar='dir',
-                        type=str,
-                        help='the path to frappe app')
-
-    arg_parser.add_argument(
-        '--output', '-o',
-        metavar='output-dir',
-        help="Output directory")
-
-    arg_parser.add_argument('--format', '-f',
-        choices=['txt', 'img', 'all'],
-        help="Specifies output format")
-
-    # Parse arguments
-    args = arg_parser.parse_args()
-
-    global frappe_app_dir, output_dir
-    frappe_app_dir = args.app_dir
-    output_dir = args.output
-    output_format = args.format
+def generate_output():
 
     if not os.path.isdir(frappe_app_dir):
         print('Frappe app directory does not exist')
@@ -213,6 +188,7 @@ def cmdline():
         sys.exit()
 
     if output_dir:
+
         if not output_format:
             print('Output format not specified')
             sys.exit()
@@ -236,4 +212,40 @@ def cmdline():
             print('UML image files generated')
     else:
         print_plantuml_text()
+
+def generate_uml(app, out=False, out_format = 'all'):
+    global frappe_app_dir, output_dir, output_format
+    frappe_app_dir = app
+    output_dir = out
+    output_format = out_format
+    generate_output()
+
+def cmdline():
+    # Create the parser
+    arg_parser = argparse.ArgumentParser(description='Generates class diagram for Frappe Framewrok app.')
+
+    # Add the arguments
+    arg_parser.add_argument('app_dir',
+                        metavar='dir',
+                        type=str,
+                        help='the path to frappe app')
+
+    arg_parser.add_argument(
+        '--output', '-o',
+        metavar='output-dir',
+        help="Output directory")
+
+    arg_parser.add_argument('--format', '-f',
+        choices=['txt', 'img', 'all'],
+        help="Specifies output format")
+
+    # Parse arguments
+    args = arg_parser.parse_args()
+
+    global frappe_app_dir, output_dir, output_format
+    frappe_app_dir = args.app_dir
+    output_dir = args.output
+    output_format = args.format
+    
+    generate_output()
 
