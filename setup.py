@@ -21,5 +21,10 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         "plantuml==0.3.0",
-    ]
+    ],
+    entry_points = {
+        "console_scripts": [
+            "frappeviz = frappeviz.__main__:cmdline",
+        ]
+    }
 )

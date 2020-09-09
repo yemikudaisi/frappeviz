@@ -226,7 +226,7 @@ def cmdline():
 
     # Add the arguments
     arg_parser.add_argument('app_dir',
-                        metavar='dir',
+                        metavar='frappe-app-directory',
                         type=str,
                         help='the path to frappe app')
 
