@@ -116,13 +116,15 @@ def generate_doctype_uml(doctype_name, fields):
     return gen.to_plantuml()
 
 def get_folder_name(module_name):
-    """ Basically converts
+    """ 
+    Basically converts
     'Hello World' to 'hello_word'
     """
     return module_name.lower().replace(' ','_')
 
 def generate_plantuml_graphics():
-    """Generate plantuml image for corresponding plantuml files in output folder.
+    """
+    Generate plantuml image for corresponding plantuml files in output folder.
     """
     for filename in os.listdir(output_dir):
         if filename.endswith('.plantuml'):
@@ -131,7 +133,8 @@ def generate_plantuml_graphics():
             continue
 
 def write_app_module_output(module_file_name, module_uml):
-    """Writes the plantuml uml text for a module to file given a module file name
+    """
+    Writes the plantuml uml text for a module to file given a module file name
     """
     if output_dir:
         if not os.path.isdir(output_dir):
@@ -142,7 +145,9 @@ def write_app_module_output(module_file_name, module_uml):
             file.close()
 
 def build_plantuml_text():
-    # Build UML packages and classes for respective modules and doctypes
+    """ 
+    Build UML packages and classes for respective modules and doctypes
+    """
     module_uml_list = []    
     for m in frappe_app_modules:
         module_path = os.path.join(frappe_app_dir,frappe_app_name,get_folder_name(m))
@@ -175,7 +180,9 @@ def generate_plantuml_text():
         write_app_module_output(get_folder_name(u['name']), u['uml'])
 
 def generate_output():
-
+    """
+    Generates the output files
+    """
     if not os.path.isdir(frappe_app_dir):
         print('Frappe app directory does not exist')
         sys.exit()
@@ -248,4 +255,3 @@ def cmdline():
     output_format = args.format
     
     generate_output()
-

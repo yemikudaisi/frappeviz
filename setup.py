@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="frappeviz", # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Yemi Kudaisi",
     author_email="contact@yemikudaisi.online",
     description="Python app for visualizing class diagrams for a Frappe Framework App using PlantUML",
