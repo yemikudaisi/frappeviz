@@ -10,31 +10,37 @@ A python app for visualizing class diagrams of a [Frappe App's](https://frappefr
 - [PlantUML](https://pypi.org/project/plantuml/)
 
 ## Installation
+
 ```
 $ pip install frappeviz
 ```
 
 ## Usage
 ### Command Line
+
 ```
 $ frappeviz [-h] [--output output-dir] [--format {txt,img,all}]
                  frappe-app-directory
 ```
 
-#### Example
-    $ frappeviz path/to/frappe/app/dir -o /path/to/output/dir -f img
-
-### Module
-```
->>> from frappeviz import generate_uml
->>> generate_uml('path/to/frappe/app/dir', '/path/to/output/dir' 'img')
-```
-
-### Arguments
+#### Arguments
 - -h: help
 - --output / -o: output directory
 - --format / -f: Output format (txt | img | all)
 - frappe directory
+
+#### Example
+
+```sh
+$ frappeviz path/to/frappe/app/dir -o /path/to/output/dir -f img
+```
+
+### Module
+
+```python
+>>> from frappeviz import generate_uml
+>>> generate_uml('path/to/frappe/app/dir', '/path/to/output/dir' 'img')
+```
 
 The UML for each module in the app is generated in separate files (PlantUML text and .png images) that shares the same name as the app's respective modules.
 
